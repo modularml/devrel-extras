@@ -3,7 +3,7 @@
 This repo contains supporting artifacts for Modular blogs, videos, and workshops. Each folder is prefixed by date in YYMM format
 so you can view our most recently released content, and contains a README.md with a link to the content.
 
-We do NOT take outside contributions to this repository. Please check out
+We do NOT take outside pull requests to this repository. Please check out
 
 * The official MAX examples 👉 [https://github.com/modularml/max](https://github.com/modularml/max)
 * The official Mojo repository 👉 [https://github.com/modularml/mojo](https://github.com/modularml/mojo)
