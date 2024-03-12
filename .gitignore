@@ -1,0 +1,9 @@
+# Compiled artifacts
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv
+.env
+env
+venv
