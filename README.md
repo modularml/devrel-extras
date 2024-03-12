@@ -3,10 +3,10 @@
 This repo contains supporting artifacts for Modular blogs, videos, and workshops. Each folder is prefixed by date in YYMM format
 so you can view our most recently released content, and contains a README.md with a link to the content.
 
-Please note that, aach example includes a identifier for which release of MAX or Mojo it has been tested with. While we will make a best effort to keep
+Please note that, each example includes an identifier for which release of MAX or Mojo it has been tested with. While we will make the best effort to keep
 these examples up to date, older code may not work perfectly with newer versions.
-To help us keep our focus on ongoing development of MAX, we're not able to accept PRs and may not be able to address all issues.
-We encourage you to consult the MAX and Mojo repositories for the latest documentation and examples
+To help us keep our focus on ongoing development of MAX, we may not be able to accept PRs and address all issues given the nature of these contents.
+We encourage you to consult the MAX and Mojo repositories for the latest documentation and maintained examples
 
 * The official MAX examples 👉 [https://github.com/modularml/max](https://github.com/modularml/max)
 * The official Mojo repository 👉 [https://github.com/modularml/mojo](https://github.com/modularml/mojo)
