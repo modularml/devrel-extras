@@ -80,3 +80,8 @@ fn tensorprint[type: DType](t: Tensor[type]) -> None:
         type.__str__(),
     )
     print()
+
+
+fn main():
+    var t = Tensor[DType.float32](2, 2)
+    tensorprint(t)

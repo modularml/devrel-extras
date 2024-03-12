@@ -11,4 +11,4 @@
 # limitations under the License.
 # ===----------------------------------------------------------------------=== #
 
-from .tensorutils import *
+from .tensorutils import tensorprint
