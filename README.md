@@ -32,3 +32,8 @@ documentation and maintained examples
 ## Workshops
 
 * [23/10 Mojo for python developers](./workshops/2310-mojo-for-python-developers)
+
+## Tweetorials
+
+* [24/03 Python object in Mojo](./tweetorials/py-obj/)
+* [24/02 Variant](./tweetorials/variant/)
