@@ -5,7 +5,7 @@ so you can view our most recently released content, and contains a README.md wit
 
 Please note that, each example includes an identifier for which release of MAX or Mojo it has been tested with. While we will make the best effort to keep
 these examples up to date, older code may not work perfectly with newer versions.
-To help us keep our focus on ongoing development of MAX, we may not be able to accept PRs and address all issues given the nature of these contents.
+To help us keep our focus on ongoing development of MAX, we make a best effort to accept and review PRs but maybe not be able to address all issues.
 We encourage you to consult the MAX and Mojo repositories for the latest documentation and maintained examples
 
 * The official MAX examples 👉 [https://github.com/modularml/max](https://github.com/modularml/max)
