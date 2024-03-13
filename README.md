@@ -22,10 +22,10 @@ documentation and maintained examples
 - [24/02 Getting started with MAX Developer Edition](./blogs/max-blogpost-demos)
 - [23/11 Implementing NumPy style matrix slicing in Mojo 🔥](./blogs/mojo-matrix-slice)
 - [23/11 What's new in Mojo 0.5](./blogs/whats-new-0-5)
+- [24/02 What are dunder methods? A guide in Mojo 🔥](./blogs/mojo-dunder)
 
 ## Videos
 
-- [24/02 What are dunder methods? A guide in Mojo 🔥](./videos/mojo-dunder)
 - [23/10 Introduction to tensors](./videos/introduction-to-tensors)
 - [23/10 Cross Platform Mojo App with Conda, PyTorch and Matplotlib](./videos/mojo-plotter)
 
