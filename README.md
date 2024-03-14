@@ -18,6 +18,7 @@ documentation and maintained examples
 
 ## Blogs
 
+- [24/03 Introduction to MAX Engine C API](./blogs/2403-max-engine-c-api)
 - [24/03 Optimize and deploy AI models with MAX Engine and MAX Serving](./blogs/max-optimize-deploy)
 - [24/02 Getting started with MAX Developer Edition](./blogs/max-blogpost-demos)
 - [23/11 Implementing NumPy style matrix slicing in Mojo 🔥](./blogs/mojo-matrix-slice)

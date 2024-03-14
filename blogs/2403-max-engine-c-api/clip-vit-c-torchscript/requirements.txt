@@ -1,0 +1,4 @@
+transformers>=4.0.0
+torch>=2.1.1
+Pillow
+requests
