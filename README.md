@@ -36,5 +36,6 @@ documentation and maintained examples
 
 ## Tweetorials
 
+- [24/03 Pointers in Mojo](./tweetorials/pointers/)
 - [24/03 Python object in Mojo](./tweetorials/py-obj/)
 - [24/02 Variant](./tweetorials/variant/)
