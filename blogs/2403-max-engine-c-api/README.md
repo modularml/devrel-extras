@@ -1,5 +1,7 @@
 # MAX Engine C API Intro
 
+Published blog post: [https://www.modular.com/blog/getting-started-with-max-engine-c-api](https://www.modular.com/blog/getting-started-with-max-engine-c-api)
+
 Versions used in this blog
 
 ```txt
