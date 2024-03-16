@@ -44,7 +44,7 @@ def main():
     print("ptr2.load():", ptr2.load())
     print("ptr.free() deallocates Int from heap but it doesn't become a null pointer")
     ptr.free()
-    ptr2.free()
+    print("ptr2 value has also been freed")
     assert_not_equal(ptr, null_ptr, "ptr is not null")
     print(
         "ptr.load() loads some random value each time the program is run:", ptr.load()
@@ -58,7 +58,6 @@ def main():
 
     my_ptr.store(MyType(42, y))
     print("my_ptr.load():", my_ptr.load())  # MyType { 42, [0.0, 1.0, 2.0, 3.0] }
-    my_ptr.free()
 
     # AnyPointer
     anyptr = AnyPointer[MoveIt]()
@@ -77,7 +76,7 @@ def main():
     print("Convert Pointer to AnyPointer with `__from_index` method")
     new_anyptr = AnyPointer[MyType].__from_index(int(my_ptr))
     print(new_anyptr[])  # MyType { 42, [0.0, 1.0, 2.0, 3.0] }
-    new_anyptr.free()
     back_to_ptr = Pointer[MyType].__from_index(int(new_anyptr))
     print(back_to_ptr.load())  # MyType { 42, [0.0, 1.0, 2.0, 3.0] }
     back_to_ptr.free()
+    new_anyptr.free()
