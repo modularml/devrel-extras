@@ -79,4 +79,3 @@ def main():
     back_to_ptr = Pointer[MyType].__from_index(int(new_anyptr))
     print(back_to_ptr.load())  # MyType { 42, [0.0, 1.0, 2.0, 3.0] }
     back_to_ptr.free()
-    new_anyptr.free()
