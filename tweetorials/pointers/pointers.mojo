@@ -49,7 +49,10 @@ def main():
     # let's use a different alignment than the default 32 which is the size of `MyType`
     # alignment is adjusted to the closest power of 2 if is greater than 32 here
     my_ptr = my_ptr.alloc(1, alignment=64)
-    # in above we have allocated 32 + 64 - 1 = 95 bytes
+    # in above we have allocated 32 + 64 - 1 = 95 bytes.
+    # This is a worst-case scenario where you might need up to 63 extra bytes to find
+    # a 64-byte aligned address within an allocated block.
+    # This doesn't mean each allocation consumes 95 bytes; it's about ensuring alignment.
     y = SIMD[DType.float32, 4]()
     for i in range(4):
         y[i] = i
