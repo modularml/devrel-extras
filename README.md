@@ -18,6 +18,7 @@ documentation and maintained examples
 
 ## Blogs
 
+- [24/03 Semantic search with MAX Engine](./blogs/2403-semantic-search-with-max-engine)
 - [24/03 Getting started with MAX Engine C API](./blogs/2403-max-engine-c-api)
 - [24/03 Optimize and deploy AI models with MAX Engine and MAX Serving](./blogs/max-optimize-deploy)
 - [24/02 Getting started with MAX Developer Edition](./blogs/max-blogpost-demos)
