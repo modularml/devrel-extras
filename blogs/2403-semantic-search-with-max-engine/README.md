@@ -1,6 +1,6 @@
 # Semantic search with MAX Engine
 
-Published blog post: TODO link
+Published blog post: [Semantic search with MAX Engine](https://www.modular.com/blog/semantic-search-with-max-engine)
 
 Versions used in this blog
 
