@@ -47,18 +47,14 @@ def main():
     print("MyType alignment in bytes:", alignof[MyType]()) # 16 bytes
     print("Pointer[MyType] alignment in bytes:", alignof[Pointer[MyType]]()) # 8 bytes
     # let's use a different alignment than the default 32 which is the size of `MyType`
-    # alignment is adjusted to the closest power of 2 if is greater than 32 here
-    my_ptr = my_ptr.alloc(1, alignment=64)
-    # in above we have allocated 32 + 64 - 1 = 95 bytes.
-    # This is a worst-case scenario where you might need up to 63 extra bytes to find
-    # a 64-byte aligned address within an allocated block.
-    # This doesn't mean each allocation consumes 95 bytes; it's about ensuring alignment.
+    my_ptr = my_ptr.alloc(1, alignment=31)
+    # in above we have allocated 62 bytes to ensure alignment.
     y = SIMD[DType.float32, 4]()
     for i in range(4):
         y[i] = i
 
-    my_ptr.aligned_store[64](MyType(42, y))
-    print("my_ptr.aligned_load():", my_ptr.aligned_load[64]())  # MyType { 42, [0.0, 1.0, 2.0, 3.0] }
+    my_ptr.store(MyType(42, y))
+    print("my_ptr.load():", my_ptr.load())  # MyType { 42, [0.0, 1.0, 2.0, 3.0] }
     my_ptr.free()
 
     alias dtype = DType.int8
@@ -68,12 +64,12 @@ def main():
     # fills with zero
     memset_zero(my_dptr, simd_width)
     print("Load a single element via .load():", my_dptr.load()) # 0
-    print("Load a simd vector via .simd_load() with offset 0:", my_dptr.simd_load[simd_width](0)) # [0, ..., 0]
+    print("Load a simd vector via .load() with offset 0:", my_dptr.load[width=simd_width](0)) # [0, ..., 0]
 
     vec = SIMD[dtype, simd_width]()
     for i in range(simd_width):
         vec[i] = i
 
-    my_dptr.simd_store[simd_width](0, vec)
-    print(my_dptr.simd_load[simd_width]()) # [0, 1, ..., 63]
+    my_dptr.store[width=simd_width](0, vec)
+    print(my_dptr.load[width=simd_width]()) # [0, 1, ..., 63]
     my_dptr.free()
