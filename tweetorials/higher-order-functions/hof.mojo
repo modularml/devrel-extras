@@ -30,7 +30,7 @@ def main():
     ) -> List[Int]:
         ret = List[Int]()
         for i in range(len(lst)):
-            ret.append(func(i))
+            ret.append(func(lst[i]))
 
         return ret
 
