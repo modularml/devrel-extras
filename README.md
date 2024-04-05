@@ -37,6 +37,8 @@ documentation and maintained examples
 
 ## Tweetorials
 
+- [24/04 SIMD type in Mojo](./tweetorials/simd/)
+- [24/04 Higher order functions in Mojo](./tweetorials/higher-order-functions/)
 - [24/03 Pointers in Mojo](./tweetorials/pointers/)
 - [24/03 Python object in Mojo](./tweetorials/py-obj/)
 - [24/02 Variant](./tweetorials/variant/)
