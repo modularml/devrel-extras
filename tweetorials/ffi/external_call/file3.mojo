@@ -88,6 +88,7 @@ fn _fread(
     ](ptr, size, nitems, stream)
 
 def fread(stream: Pointer[FILE], buf_read_size: Int = 1024) -> String:
+    debug_assert(stream != Pointer[FILE](), "File must be opened first")
     # Choosing a large buffer for the sake of example.
     # Exercise: Implement `read_file_to_end` in case
     # the size is greater than the buffer size
