@@ -107,10 +107,10 @@ struct MojoMatrix[dtype: DType = DType.float64, is_row_major: Bool=True]():
                 var tmpPtr = self._matPtr.offset(cols_list[idx_col])
                 for idx_row in range(0, simd_multiple, simd_width):
                     simd_sum+=tmpPtr.simd_strided_load[width=simd_width](self.cols)
-                    tmpPtr = tmpPtr.offset(simd_width*self.cols)
+                    tmpPtr += simd_width*self.cols
                 for idx_row in range(simd_multiple, self.rows):
                     simd_sum[0] += tmpPtr.simd_strided_load[width=1](self.cols)
-                    tmpPtr = tmpPtr.offset(simd_width*self.cols)
+                    tmpPtr += self.cols
                 new_mat._matPtr[idx_col] = simd_sum.reduce_add()
             else:
                 for idx_row in range(0, simd_multiple, simd_width):
