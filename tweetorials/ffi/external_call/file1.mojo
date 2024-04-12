@@ -22,7 +22,7 @@ fn fclose(stream: Pointer[FILE]) -> c_int:
 fn ferror(stream: Pointer[FILE]) -> c_int:
     return external_call["ferror", c_int, Pointer[FILE]](stream)
 
-fn to_char_ptr(s: String) -> Pointer[c_char]:
+fn as_char_ptr(s: String) -> Pointer[c_char]:
     var nelem = len(s)
     var ptr = Pointer[c_char]().alloc(nelem + 1)  # +1 for null termination
     for i in range(len(s)):
@@ -32,9 +32,13 @@ fn to_char_ptr(s: String) -> Pointer[c_char]:
     return ptr
 
 def main():
-    fp = fopen(to_char_ptr("test.txt"), to_char_ptr("r"))
+    path_ptr = as_char_ptr("test.txt")
+    mode_ptr = as_char_ptr("r")
+    fp = fopen(path_ptr, mode_ptr)
     if ferror(fp):
         print("Error opening file")
         return
 
     _ = fclose(fp)
+    mode_ptr.free()
+    path_ptr.free()
