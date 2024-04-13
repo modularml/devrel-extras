@@ -15,9 +15,6 @@ fn fopen(path: Pointer[c_char], mode: Pointer[c_char]) -> Pointer[FILE]:
         Pointer[c_char],
     ](path, mode)
 
-fn ferror(stream: Pointer[FILE]) -> c_int:
-    return external_call["ferror", c_int, Pointer[FILE]](stream)
-
 fn fclose(stream: Pointer[FILE]) -> c_int:
     return external_call["fclose", c_int, Pointer[FILE]](stream)
 
@@ -63,7 +60,7 @@ def main():
     path_ptr = as_char_ptr("test.txt")
     mode_ptr = as_char_ptr("r")
     fp = fopen(path_ptr, mode_ptr)
-    if ferror(fp):
+    if fp == Pointer[FILE]():
         print("Error opening file")
         return
 

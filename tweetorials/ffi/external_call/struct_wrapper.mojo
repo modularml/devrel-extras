@@ -1,4 +1,5 @@
 from sys.ffi import external_call
+from testing import assert_raises
 
 alias c_char = UInt8
 alias c_int = Int32
@@ -19,13 +20,13 @@ struct FileHandle:
     fn __init__(inout self, path: String, mode: String) raises:
         var path_ptr = self._as_char_ptr(path)
         var mode_ptr = self._as_char_ptr(mode)
+        # https://man7.org/linux/man-pages/man3/fopen.3.html
         var handle = external_call["fopen", Pointer[FILE]](
             path_ptr, mode_ptr
         )
         mode_ptr.free()
         path_ptr.free()
-        var err = external_call["ferror", c_int, Pointer[FILE]](handle)
-        if err:
+        if handle == Pointer[FILE]():
             raise Error("Error opening file")
 
         self.handle = handle
@@ -42,6 +43,7 @@ struct FileHandle:
 
 
     fn fclose(self) raises:
+        """Safe and idiomatic wrapper https://man7.org/linux/man-pages/man3/fclose.3.html."""
         debug_assert(self.handle != Pointer[FILE](), "File must be opened first")
         var ret = external_call["fclose", c_int, Pointer[FILE]](self.handle)
         if ret:
@@ -50,6 +52,7 @@ struct FileHandle:
         return
 
     fn fseek(self, offset: UInt64 = 0, whence: Int32 = SEEK_END) raises:
+        """Safe and idiomatic wrapper https://man7.org/linux/man-pages/man3/fseek.3.html."""
         debug_assert(self.handle != Pointer[FILE](), "File must be opened first")
         var ret = external_call["fseek", c_int, Pointer[FILE], c_long, c_int](
             self.handle, offset, whence
@@ -60,9 +63,14 @@ struct FileHandle:
 
         return
 
-    fn ftell(self) -> UInt64:
+    fn ftell(self) raises -> UInt64:
+        """Safe and idiomatic wrapper https://man7.org/linux/man-pages/man3/ftell.3p.html."""
         debug_assert(self.handle != Pointer[FILE](), "File must be opened")
-        return external_call["ftell", c_long, Pointer[FILE]](self.handle)
+        var ret = external_call["ftell", c_long, Pointer[FILE]](self.handle)
+        if ret == -1:
+            raise Error("ftell failed")
+
+        return ret
 
     @staticmethod
     fn _fread(
@@ -81,6 +89,7 @@ struct FileHandle:
         ](ptr, size, nitems, stream)
 
     fn fread(self, buf_read_size: Int = 1024) raises -> String:
+        """Safe and idiomatic wrapper https://man7.org/linux/man-pages/man3/fread.3p.html."""
         debug_assert(self.handle != Pointer[FILE](), "File must be opened first")
         # Choosing a large buffer for the sake of example.
         # Exercise: Implement `read_file_to_end` in case
@@ -100,12 +109,13 @@ struct FileHandle:
         return String(buf.bitcast[Int8](), int(count) + 1) # +1 include null-termintor
 
 
-fn fopen(path: String, mode: String) raises -> FileHandle:
+
+fn fopen(path: String, mode: String = "r") raises -> FileHandle:
     return FileHandle(path, mode)
 
 def main():
     try:
-        file = fopen("test.txt", "r")
+        file = fopen("test.txt")
         file.fseek(0)
         size = file.ftell()
         print("file size in bytes:", size) # 36 bytes
@@ -114,3 +124,17 @@ def main():
         file.fclose()
     except:
         print("Error has occured")
+
+    with assert_raises():
+        # test double close
+        with assert_raises():
+            file = fopen("test.txt")
+            file.fclose()
+            file.fclose()
+        # test notexist
+        _ = fopen("notexist.txt")
+        # test fseek and ftell fail cases
+        file = fopen("test.txt")
+        file.fseek(-100)
+        _ = file.ftell()
+        file.fclose()

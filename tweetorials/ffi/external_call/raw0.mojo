@@ -19,9 +19,6 @@ alias c_int = Int32
 fn fclose(stream: Pointer[FILE]) -> c_int:
     return external_call["fclose", c_int, Pointer[FILE]](stream)
 
-fn ferror(stream: Pointer[FILE]) -> c_int:
-    return external_call["ferror", c_int, Pointer[FILE]](stream)
-
 fn as_char_ptr(s: String) -> Pointer[c_char]:
     var nelem = len(s)
     var ptr = Pointer[c_char]().alloc(nelem + 1)  # +1 for null termination
@@ -35,7 +32,7 @@ def main():
     path_ptr = as_char_ptr("test.txt")
     mode_ptr = as_char_ptr("r")
     fp = fopen(path_ptr, mode_ptr)
-    if ferror(fp):
+    if fp == Pointer[FILE]():
         print("Error opening file")
         return
 

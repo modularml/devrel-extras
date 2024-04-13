@@ -29,7 +29,7 @@ def fopen(path: String, mode: String) -> Pointer[FILE]:
     path_ptr = _as_char_ptr(path)
     mode_ptr = _as_char_ptr(mode)
     stream = _fopen(path_ptr, mode_ptr)
-    if _ferror(stream):
+    if stream == Pointer[FILE]():
         raise Error("Cannot open the file")
 
     mode_ptr.free()
@@ -43,9 +43,6 @@ fn _fopen(path: Pointer[c_char], mode: Pointer[c_char]) -> Pointer[FILE]:
         Pointer[c_char],
         Pointer[c_char],
     ](path, mode)
-
-fn _ferror(stream: Pointer[FILE]) -> c_int:
-    return external_call["ferror", c_int, Pointer[FILE]](stream)
 
 fn _as_char_ptr(s: String) -> Pointer[c_char]:
     var nelem = len(s)
@@ -70,9 +67,13 @@ def fseek(stream: Pointer[FILE], offset: UInt64 = 0, whence: Int32 = SEEK_END):
 
     return
 
-fn ftell(stream: Pointer[FILE]) -> c_long:
+fn ftell(stream: Pointer[FILE]) raises -> c_long:
     debug_assert(stream != Pointer[FILE](), "File must be opened")
-    return external_call["ftell", c_long, Pointer[FILE]](stream)
+    var ret = external_call["ftell", c_long, Pointer[FILE]](stream)
+    if ret == -1:
+        raise Error("ftell failed")
+
+    return ret
 
 fn _fread(
     ptr: Pointer[c_void],
@@ -110,12 +111,6 @@ def fread(stream: Pointer[FILE], buf_read_size: Int = 1024) -> String:
 
 
 def main():
-    with assert_raises():
-        null_ptr = Pointer[FILE]()
-        fclose(null_ptr)
-        _ = ftell(null_ptr)
-        fseek(null_ptr)
-        _ = fread(null_ptr)
     try:
         fp = fopen("test.txt", "r")
         fseek(fp)
@@ -127,3 +122,18 @@ def main():
         _ = fclose(fp)
     except:
         print("Error has occured")
+
+    with assert_raises():
+        # test notexist
+        _ = fopen("notexist.txt", "r")
+        # test fseek and ftell fail cases
+        fp = fopen("test.txt", "r")
+        fseek(fp, -100)
+        _ = ftell(fp)
+        fclose(fp)
+        # test null ptr
+        null_ptr = Pointer[FILE]()
+        fclose(null_ptr)
+        _ = ftell(null_ptr)
+        fseek(null_ptr)
+        _ = fread(null_ptr)
