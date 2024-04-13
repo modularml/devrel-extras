@@ -68,6 +68,7 @@ struct FileHandle:
         debug_assert(self.handle != Pointer[FILE](), "File must be opened")
         var ret = external_call["ftell", c_long, Pointer[FILE]](self.handle)
         if ret == -1:
+            self.fclose()
             raise Error("ftell failed")
 
         return ret
@@ -133,8 +134,10 @@ def main():
             file.fclose()
         # test notexist
         _ = fopen("notexist.txt")
-        # test fseek and ftell fail cases
+        # test fseek and ftell fail cases (and multi close)
         file = fopen("test.txt")
         file.fseek(-100)
         _ = file.ftell()
+        file.fseek(whence=SEEK_SET)
+        _ = file.fread()
         file.fclose()

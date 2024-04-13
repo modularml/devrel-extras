@@ -71,6 +71,11 @@ def main():
         return
 
     size = ftell(fp)
+    if size == -1:
+        print("Error in ftell")
+        _ = fclose(fp)
+        return
+
     print("file size in bytes:", size) # 36 bytes
     # Reposition to the start of the file
     alias SEEK_SET = 0
