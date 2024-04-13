@@ -124,13 +124,22 @@ def main():
         print("Error has occured")
 
     with assert_raises():
+        fp = fopen("test.txt", "r")
+        fclose(fp)
+        fclose(fp)
+
+    with assert_raises():
         # test notexist
         _ = fopen("notexist.txt", "r")
+
+    with assert_raises():
         # test fseek and ftell fail cases
         fp = fopen("test.txt", "r")
         fseek(fp, -100)
         _ = ftell(fp)
         fclose(fp)
+
+    with assert_raises():
         # test null ptr
         null_ptr = Pointer[FILE]()
         fclose(null_ptr)

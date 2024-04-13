@@ -126,14 +126,17 @@ def main():
     except:
         print("Error has occured")
 
+    # test double close
     with assert_raises():
-        # test double close
-        with assert_raises():
-            file = fopen("test.txt")
-            file.fclose()
-            file.fclose()
+        file = fopen("test.txt")
+        file.fclose()
+        file.fclose()
+
+    with assert_raises():
         # test notexist
         _ = fopen("notexist.txt")
+
+    with assert_raises():
         # test fseek and ftell fail cases (and multi close)
         file = fopen("test.txt")
         file.fseek(-100)
