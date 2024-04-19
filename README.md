@@ -37,6 +37,7 @@ documentation and maintained examples
 
 ## Tweetorials
 
+- [24.4 Vectorize and parallelize in Mojo](./tweetorials/vectorize-parallelize/)
 - [24.04 FFI external_call in Mojo](./tweetorials/ffi/external_call/)
 - [24/04 SIMD type in Mojo](./tweetorials/simd/)
 - [24/04 Higher order functions in Mojo](./tweetorials/higher-order-functions/)
