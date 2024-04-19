@@ -9,13 +9,9 @@ def main():
         x[i] = 42
 
     # Note: x.load returns SIMD[type, width]
-    print(
-        "initialized x:", x.load[width=size]()
-    )  # [42, ..., 42]
+    print("initialized x:", x.load[width=size]())  # [42, ..., 42]
     print("manual SIMD print")
-    simd_multiple = (
-        size - size % simd_width
-    )  # 10 - 10 % 4 = 8
+    simd_multiple = size - size % simd_width  # 10 - 10 % 4 = 8
     for offset in range(0, simd_multiple, simd_width):
         print(
             "offset =",
@@ -70,23 +66,11 @@ def main():
     # takes care of the remainder
     # `range(simd_multiple, size)` above and adjusts `width`
 
-    print(
-        "vectorized SIMD print with known size at"
-        " compile-time"
-    )
-    vectorize[print_it, simd_width, size=size]()
-    # outputs:
-    # offset = 0 width = 4 : [42, 42, 42, 42]
-    # offset = 4 width = 4 : [42, 42, 42, 42]
-    # offset = 8 width = 2 : [42, 42]
-
     y = DTypePointer[type].alloc(size)
     for j in range(size):
         y[j] = -42
 
-    print(
-        "initialized y:", y.load[width=size]()
-    )  # [-42, ..., -42]
+    print("initialized y:", y.load[width=size]())  # [-42, ..., -42]
     z = DTypePointer[type].alloc(size)
     # initialize with 0
     memset_zero(z, size)
@@ -94,9 +78,7 @@ def main():
     @parameter
     fn elementwise_sum[width: Int](offset: Int):
         # elementwise sum formula is:
-        var x_simd_chunk = x.load[width=width](
-            offset=offset
-        )
+        var x_simd_chunk = x.load[width=width](offset=offset)
         print(
             "[x]    ",
             "offset =",
@@ -106,9 +88,7 @@ def main():
             ":",
             x_simd_chunk,
         )
-        var y_simd_chunk = y.load[width=width](
-            offset=offset
-        )
+        var y_simd_chunk = y.load[width=width](offset=offset)
         print(
             "[y]    ",
             "offset =",
@@ -128,9 +108,7 @@ def main():
             ":",
             val,
         )
-        print(
-            "=============================================================="
-        )
+        print("==============================================================")
         z.store[width=width](offset=offset, val=val)
 
     vectorize[elementwise_sum, simd_width](size)
@@ -151,9 +129,7 @@ def main():
     # [y]     offset = 9 width =  1 : -42
     # [x + y] offset = 9 width =  1 : 0
     # ==============================================================
-    print(
-        "elementwise sum result:", z.load[width=size]()
-    )  # [0, ..., 0]
+    print("elementwise sum result:", z.load[width=size]())  # [0, ..., 0]
 
     # don't forget to free the allocated pointers
     z.free()
@@ -180,9 +156,7 @@ def main():
 
     num_work_items = 2
     print("num_work_items =", num_work_items)
-    chunk_size = math.div_ceil(
-        large_size, num_work_items
-    )  # 50
+    chunk_size = math.div_ceil(large_size, num_work_items)  # 50
     print("chunk_size =", chunk_size)
 
     # divides xx, yy into two arrayes of 50 elements each (xx_1, xx_2) and (yy_1, yy_2)
@@ -220,12 +194,8 @@ def main():
 
         @parameter
         fn _elementwise_sum[width: Int](offset: Int):
-            var val = xx.load[width=width](
-                offset=start + offset
-            ) + yy.load[width=width](offset=start + offset)
-            zz.store[width=width](
-                offset=start + offset, val=val
-            )
+            var val = xx.load[width=width](offset=start + offset) + yy.load[width=width](offset=start + offset)
+            zz.store[width=width](offset=start + offset, val=val)
 
         vectorize[_elementwise_sum, simd_width](end - start)
 
