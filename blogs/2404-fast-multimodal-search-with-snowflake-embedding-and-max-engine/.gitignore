@@ -1,1 +1,3 @@
 *.torchscript
+train_images
+test_images
