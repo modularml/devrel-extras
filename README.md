@@ -18,7 +18,7 @@ documentation and maintained examples
 
 ## Blogs
 
-- [24/04 Multimodal search with MAX Engine](./blogs/2404-multimodal-search-with-max-engine)
+- [24/04 Multimodal search with MAX Engine](./blogs/2404-fast-multimodal-search-with-snowflake-embedding-and-max-engine/)
 - [24/03 Semantic search with MAX Engine](./blogs/2403-semantic-search-with-max-engine)
 - [24/03 Getting started with MAX Engine C API](./blogs/2403-max-engine-c-api)
 - [24/03 Optimize and deploy AI models with MAX Engine and MAX Serving](./blogs/max-optimize-deploy)

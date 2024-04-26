@@ -1,6 +1,6 @@
 # Multimodal search with MAX Engine
 
-Published blog post: [Multimodal search with MAX Engine](https://www.modular.com/blog/multimodal-search-with-max-engine)
+Published blog post: [Fast Multimodal Search Snowflake Embedding with MAX Engine](https://www.modular.com/blog/fast-multimodal-search-with-snowflake-embedding-and-max-engine)
 
 Versions used in this blog
 
