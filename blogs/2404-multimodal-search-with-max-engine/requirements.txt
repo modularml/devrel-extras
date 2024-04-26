@@ -1,0 +1,5 @@
+numpy==1.26.4
+torch==2.2.2
+transformers==4.39.3
+datasets==2.18.0
+fiftyone==0.23.8
