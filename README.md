@@ -38,6 +38,7 @@ documentation and maintained examples
 
 ## Tweetorials
 
+- [24.4 Bit manipulation and ops in Mojo](./tweetorials/bitops/)
 - [24.4 Vectorize and parallelize in Mojo](./tweetorials/vectorize-parallelize/)
 - [24.04 FFI external_call in Mojo](./tweetorials/ffi/external_call/)
 - [24/04 SIMD type in Mojo](./tweetorials/simd/)
