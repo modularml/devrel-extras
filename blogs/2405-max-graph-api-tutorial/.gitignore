@@ -1,0 +1,4 @@
+data
+*.npy
+*.mojopkg
+mnist

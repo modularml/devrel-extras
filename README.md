@@ -18,6 +18,7 @@ documentation and maintained examples
 
 ## Blogs
 
+- [24/05 MAX Graph API Tutorial](./blogs/2405-max-graph-api-tutorial/)
 - [24/04 Multimodal search with snowflake embedding and MAX Engine](./blogs/2404-fast-multimodal-search-with-snowflake-embedding-and-max-engine/)
 - [24/03 Semantic search with MAX Engine](./blogs/2403-semantic-search-with-max-engine)
 - [24/03 Getting started with MAX Engine C API](./blogs/2403-max-engine-c-api)
