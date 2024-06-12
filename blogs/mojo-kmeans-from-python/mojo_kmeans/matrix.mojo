@@ -1,4 +1,4 @@
-from math import mul, div, mod, add, trunc, align_down, align_down_residual
+from math.math import trunc
 from memory import memset_zero, memcpy
 from sys.info import simdwidthof
 from algorithm import vectorize
@@ -33,15 +33,12 @@ struct Matrix[dtype: DType = DType.float64](Stringable, CollectionElement, Sized
         self.cols = cols
         @parameter
         fn splat_val[simd_width: Int](idx: Int) -> None:
-            self._matPtr.store[width=simd_width](idx, self._matPtr.load[width=simd_width](idx).splat(val))
+            self._matPtr.store[width=simd_width](idx, SIMD[dtype, simd_width].splat(val))
         vectorize[splat_val, simd_width](self.rows*self.cols)
 
     @always_inline
     fn __init__(inout self, other: Self):
-        self.rows = other.rows
-        self.cols = other.cols
-        self._matPtr = DTypePointer[dtype].alloc(len(other))
-        memcpy(self._matPtr, other._matPtr, len(other))
+        self.__copyinit__(other)
 
     @always_inline  
     fn __init__(inout self, elems: Int):
@@ -58,28 +55,22 @@ struct Matrix[dtype: DType = DType.float64](Stringable, CollectionElement, Sized
 
     @always_inline
     fn __init__(inout self, rows: Int, cols:Int, *data: Scalar[dtype]):
+        self.__init__(rows, cols)
         var data_len = len(data)
-        self.rows = rows
-        self.cols = cols
-        self._matPtr = DTypePointer[dtype].alloc(data_len)
         for i in range(data_len):
             self._matPtr[i] = data[i]
 
     @always_inline
     fn __init__(inout self, rows: Int, cols:Int, owned list: List[Scalar[dtype]]):
+        self.__init__(rows, cols)
         var list_len = len(list)
-        self.rows = rows
-        self.cols = cols
-        self._matPtr = DTypePointer[dtype].alloc(list_len)
         for i in range(list_len):
             self._matPtr[i] = list[i]
 
     @always_inline
     fn __init__(inout self, dims: StaticIntTuple[2], vals: List[Scalar[dtype]]):
+        self.__init__(dims[0], dims[1])
         var list_len = len(vals)
-        self.rows = dims[0]
-        self.cols = dims[1]
-        self._matPtr = DTypePointer[dtype].alloc(list_len)
         for i in range(list_len):
             self._matPtr[i] = vals[i]
 
@@ -105,8 +96,22 @@ struct Matrix[dtype: DType = DType.float64](Stringable, CollectionElement, Sized
         self._matPtr.store[width=1](elem, val)
 
     fn __setitem__(inout self, row: Int, col:Int, val: SIMD[dtype,1]):
-        return self._matPtr.store[width=1](row*self.cols+col, val)
+        self._matPtr.store[width=1](row*self.cols+col, val)
+    
+    # fn __setitem__(inout self, row: Int, owned col_slice:Slice, other: Self):
+    #     alias simd_width: Int = self.simd_width
 
+    #     self._adjust_slice_(col_slice, self.cols)
+    #     memcpy(self._matPtr.offset(row*self.cols), other._matPtr.offset(col_slice.start), len(col_slice))
+
+    #     # var dst_ptr = self._matPtr.offset(row*self.cols)
+    #     # var src_ptr = other._matPtr.offset(col_slice.start)
+    #     # @parameter
+    #     # fn slice_col_vectorize[simd_width: Int](idx: Int) -> None:
+    #     #     dst_ptr.store[width=simd_width](idx, src_ptr.simd_strided_load[width=simd_width](col_slice.step))
+    #     #     src_ptr = src_ptr.offset(simd_width*col_slice.step)
+    #     # vectorize[slice_col_vectorize, simd_width](len(col_slice))
+        
     @always_inline
     fn __getitem__(self, idx: Int) -> SIMD[dtype, 1]:
         return self._matPtr.load(idx) 
@@ -125,44 +130,34 @@ struct Matrix[dtype: DType = DType.float64](Stringable, CollectionElement, Sized
 
     @always_inline
     fn __getitem__(self, owned row_slice: Slice, owned col_slice: Slice) -> Self:
-        self._adjust_row_slice_(row_slice)
-        self._adjust_col_slice_(col_slice)
+        self._adjust_slice_(row_slice, self.rows)
+        self._adjust_slice_(col_slice, self.cols)
 
         var src_ptr = self._matPtr
-        var dest_mat = Self(row_slice.__len__(),col_slice.__len__())
+        var dest_mat = Self(row_slice.unsafe_indices(), col_slice.unsafe_indices())
 
         alias simd_width: Int = self.simd_width
 
-        for idx_rows in range(row_slice.__len__()):
+        for idx_rows in range(row_slice.unsafe_indices()):
             src_ptr = self._matPtr.offset(row_slice[idx_rows]*self.cols+col_slice[0])
             @parameter
             fn slice_col_vectorize[simd_width: Int](idx: Int) -> None:
-                dest_mat._matPtr.store[width=simd_width](idx+idx_rows*col_slice.__len__(),src_ptr.simd_strided_load[width=simd_width](col_slice.step))
+                dest_mat._matPtr.store[width=simd_width](idx+idx_rows*col_slice.unsafe_indices(),src_ptr.simd_strided_load[width=simd_width](col_slice.step))
                 src_ptr = src_ptr.offset(simd_width*col_slice.step)
-            vectorize[slice_col_vectorize, simd_width](col_slice.__len__())
+            vectorize[slice_col_vectorize, simd_width](col_slice.unsafe_indices())
         return dest_mat
 
     @always_inline
-    fn _adjust_row_slice_(self, inout span: Slice):
+    fn _adjust_slice_(self, inout span: Slice, nelems: Int):
         if span.start < 0:
-            span.start = self.rows + span.start
+            span.start = nelems + span.start
             
         if not span._has_end():
-            span.end = self.rows
+            span.end = nelems
         elif span.end < 0:
-            span.end = self.rows+ span.end
-        if span.end > self.rows:
-            span.end = self.rows
-
-    fn _adjust_col_slice_(self, inout span: Slice):
-        if span.start < 0:
-            span.start = self.cols + span.start
-        if not span._has_end():
-            span.end = self.cols
-        elif span.end < 0:
-            span.end = self.cols + span.end
-        if span.end > self.cols:
-            span.end = self.cols
+            span.end = nelems + span.end
+        if span.end > nelems:
+            span.end = nelems
 
     @always_inline
     fn __len__(self) -> Int:
@@ -178,7 +173,7 @@ struct Matrix[dtype: DType = DType.float64](Stringable, CollectionElement, Sized
 
     @always_inline
     fn __add__(self, val: Scalar[dtype])->Self:
-        return self._elemwise_scalar_math[math.add](val)
+        return self._elemwise_scalar_math[add](val)
 
     @always_inline
     fn __iadd__(inout self, other: Self):
@@ -190,7 +185,7 @@ struct Matrix[dtype: DType = DType.float64](Stringable, CollectionElement, Sized
 
     @always_inline
     fn __truediv__(self, s: Scalar[dtype])->Self:
-        return self._elemwise_scalar_math[math.div](s)
+        return self._elemwise_scalar_math[div](s)
 
     @always_inline
     fn __truediv__(self, mat: Self)->Self:
@@ -216,7 +211,7 @@ struct Matrix[dtype: DType = DType.float64](Stringable, CollectionElement, Sized
         alias simd_width = self.simd_width
         @parameter
         fn elemwise_vectorize[simd_width: Int](idx: Int) -> None:
-            self._matPtr.store[width=simd_width](idx, math.div[dtype, simd_width](self._matPtr.load[width=simd_width](idx), SIMD[dtype, simd_width](s)))
+            self._matPtr.store[width=simd_width](idx, self._matPtr.load[width=simd_width](idx) / SIMD[dtype, simd_width](s))
         vectorize[elemwise_vectorize, simd_width](len(self))
 
     fn _transpose_order(self) -> DTypePointer[dtype]:
@@ -235,11 +230,11 @@ struct Matrix[dtype: DType = DType.float64](Stringable, CollectionElement, Sized
         alias simd_width = self.simd_width
         var centered_data = Self(self.rows, self.cols)
         var mean_array = self.mean[axis=0]()
-        print(mean_array)
-        for idx_mat_row in range(self.rows):
+        # print(mean_array)
+        for idx_row in range(self.rows):
             @parameter
             fn center[simd_width: Int](idx: Int) -> None:
-                centered_data._matPtr.store[width=simd_width](idx_mat_row*self.cols+idx, self._matPtr.load[width=simd_width](idx_mat_row*self.cols+idx)-mean_array._matPtr.load[width=simd_width](idx))
+                centered_data._matPtr.store[width=simd_width](idx_row*self.cols+idx, self._matPtr.load[width=simd_width](idx_row*self.cols+idx)-mean_array._matPtr.load[width=simd_width](idx))
             vectorize[center, simd_width](len(mean_array))
         return centered_data
 
@@ -252,7 +247,7 @@ struct Matrix[dtype: DType = DType.float64](Stringable, CollectionElement, Sized
         alias simd_width = self.simd_width
         @parameter
         fn splat_val[simd_width: Int](idx: Int) -> None:
-            self._matPtr.store[width=simd_width](idx, self._matPtr.load[width=simd_width](idx).splat(val))
+            self._matPtr.store[width=simd_width](idx, SIMD[dtype, simd_width].splat(val))
         vectorize[splat_val, simd_width](self.rows*self.cols)
 
     @always_inline
@@ -305,7 +300,7 @@ struct Matrix[dtype: DType = DType.float64](Stringable, CollectionElement, Sized
         return dest_mat/counter
 
     @always_inline
-    fn argmin(self, axis:Int=1) raises -> Matrix[DType.index]:
+    fn argmin(self) raises -> Matrix[DType.index]:
         var labels_mat = Matrix[DType.index](self.rows,1)
         var self_buf = NDBuffer[dtype,2](self._matPtr, DimList(self.rows, self.cols))
         var labels_mat_buf = NDBuffer[DType.index,2](labels_mat._matPtr, DimList(labels_mat.rows, 1))
@@ -403,11 +398,11 @@ struct Matrix[dtype: DType = DType.float64](Stringable, CollectionElement, Sized
                         # val = math.abs(val)
                         int_str = str(trunc(val).cast[DType.index]())
                     var float_str: String = ""
-                    if mod(val,1)==0:
+                    if val % 1==0:
                         float_str = "0"
                     else:
                         try:
-                            float_str = str(mod(val,1)).split('.')[-1][0:4]
+                            float_str = str(val % 1).split('.')[-1][0:4]
                         except:
                             return ""
                     var s: String = int_str+"."+float_str
@@ -458,3 +453,13 @@ struct Matrix[dtype: DType = DType.float64](Stringable, CollectionElement, Sized
             new_mat._matPtr.store[width=simd_width](idx, math.pow(self._matPtr.load[width=simd_width](idx), p))
         vectorize[pow_vectorize, simd_width](len(self))
         return new_mat
+
+
+fn add[dtype: DType, width: Int](a: SIMD[dtype, width], b: SIMD[dtype, width])->SIMD[dtype, width]:
+    return a + b
+
+fn mul[dtype: DType, width: Int](a: SIMD[dtype, width], b: SIMD[dtype, width])->SIMD[dtype, width]:
+    return a * b
+
+fn div[dtype: DType, width: Int](a: SIMD[dtype, width], b: SIMD[dtype, width])->SIMD[dtype, width]:
+    return a / b

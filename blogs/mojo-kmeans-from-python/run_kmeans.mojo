@@ -1,5 +1,5 @@
 from mojo_kmeans import Matrix, Kmeans
-from mojo_kmeans.utils import list_to_matrix
+from mojo_kmeans.utils import list_to_matrix, kmeans_plus_plus
 from time import now
 from python import Python
 
@@ -12,11 +12,12 @@ def main():
     sklearn_datasets = Python.import_module("sklearn.datasets")
     sklearn_cluster = Python.import_module("sklearn.cluster")
 
-    n_clusters = 10
-    n_samples = 3000
+    n_clusters = 5
+    n_samples = 5000
     n_features = 200
     plot_result = True
     verbose = True
+    SEED = 42
 
     X = sklearn_datasets.make_blobs(n_samples=n_samples, 
                                         cluster_std=5, 
@@ -25,20 +26,25 @@ def main():
                                         return_centers=True,
                                         random_state=int(now()/1e10))
     data = Matrix.from_numpy(X[0])
+    random.seed(SEED)
+    centroids = kmeans_plus_plus[DType.float64, 4*simdwidthof[DType.float64]()](data, n_clusters)
+    py_centroids = list_to_matrix(centroids).to_numpy()
 
     # Common arguments:
     max_iterations = 100
 
     print("\n======== Mojo Kmeans ========")
-    mojo_model = Kmeans(k=n_clusters)
+    mojo_model = Kmeans(centroids)
 
     t = now()
     mojo_centroids = mojo_model.fit(data)
     t_mojo = Float64(now()-t)/1_000_000
     print('Mojo Kmeans complete (ms):',t_mojo)
+
+    
     
     print("\n======== Python Kmeans ========")
-    py_model = py_kmeans.Kmeans(k=n_clusters)
+    py_model = py_kmeans.Kmeans(py_centroids)
 
     t = now()
     py_centroids = py_model.fit(X[0])
@@ -52,7 +58,8 @@ def main():
     sklearn_model = sklearn_cluster.KMeans(n_clusters=n_clusters, 
                                             max_iter=max_iterations,
                                             verbose=verbose_num,
-                                            tol=0)
+                                            tol=0,
+                                            init=py_centroids)
 
     t = now()
     sklearn_centroids = sklearn_model.fit(X[0])
