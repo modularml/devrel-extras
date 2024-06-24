@@ -45,7 +45,7 @@ struct Config:
         self.min_p = min_p
 
 
-struct LLM[Encoding: QuantizationEncoding = Float32Encoding]:
+struct Llama[Encoding: QuantizationEncoding = Float32Encoding]:
     var _model: Llama3[Encoding]
     var _session: InferenceSession
     var _compiled_model: EngineModel
@@ -98,9 +98,9 @@ struct LLM[Encoding: QuantizationEncoding = Float32Encoding]:
         )
         return results.get[DType.float32]("output0")
 
-    def __call__(inout self, input: String) -> String:
-        encoded = self.tokenizer.encode(input)
-        tokens = Tensor[DType.int64](TensorShape(1, len(input)))
+    def __call__(inout self, text: String) -> String:
+        encoded = self.tokenizer.encode(text)
+        tokens = Tensor[DType.int64](TensorShape(1, len(text)))
         for i in range(len(encoded)):
             tokens[Index(0, i)] = encoded[i].id
 
