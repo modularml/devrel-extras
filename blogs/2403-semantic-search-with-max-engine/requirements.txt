@@ -1,7 +1,9 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+
 numpy==1.24.3
 pandas==2.2.1
 scikit-learn==1.5.0
-torch==2.2.1+cpu
+torch==2.2.1
 transformers==4.38.2
 chromadb==0.4.24
 onnx==1.15.0
