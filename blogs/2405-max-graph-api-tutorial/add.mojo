@@ -1,6 +1,6 @@
 from max.graph import Graph, TensorType, Type
 from max import engine
-from tensor import Tensor
+from max.tensor import Tensor
 
 
 def main():

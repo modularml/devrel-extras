@@ -4,7 +4,7 @@ from python import Python as py
 from max.graph import Graph, TensorType, ops
 from max import engine
 from extensibility import Tensor as TensorExt, empty_tensor
-from tensor import Tensor, TensorShape, TensorSpec
+from max.tensor import Tensor, TensorShape, TensorSpec
 
 
 def load_model_weights(use_relu6: Bool) -> PythonObject:
@@ -24,9 +24,7 @@ def load_model_weights(use_relu6: Bool) -> PythonObject:
 
 @always_inline
 fn numpy_data_pointer[type: DType](numpy_array: PythonObject) raises -> DTypePointer[type]:
-    return DTypePointer[type](
-        address=int(numpy_array.__array_interface__["data"][0])
-    )
+    return numpy_array.__array_interface__["data"][0].unsafe_get_as_pointer[type]()
 
 @always_inline
 fn memcpy_from_numpy(array: PythonObject, tensor: Tensor) raises:
