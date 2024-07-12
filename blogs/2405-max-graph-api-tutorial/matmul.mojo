@@ -4,6 +4,7 @@ from random import seed
 from max.engine import InferenceSession
 
 def main():
+    # 1.Define the graph
     graph = Graph(TensorType(DType.float32, "m", 2))
     # create a constant tensor
     constant_value = Tensor[DType.float32](TensorShape(2, 2), 42.0)
@@ -16,9 +17,11 @@ def main():
     # verify
     graph.verify()
 
-    # load the graph
+    # 2. Load and compile the graph
     session = InferenceSession()
     model = session.load(graph)
+
+    # 3. Execute the graph with inputs
     # generate random inputs
     seed(42)
     input0 = Tensor[DType.float32].randn((2, 2))
