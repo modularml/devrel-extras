@@ -28,13 +28,7 @@ to train with relu6. Then for inference and checking test accuracy matches the P
 ensure to run `mojo package custom_ops` and follow with `mojo mnist.mojo --use-relu6`.
 
 
-Note: `mojo build mnist.mojo` builds the `mnist` binary, make sure to set `MOJO_PYTHON_LIBRARY` via
-
-```sh
-export MOJO_PYTHON_LIBRARY=$(modular config mojo-max.python_lib)
-```
-
-prior to executing the binary `./mnist`
+Note: `mojo build mnist.mojo` builds the `mnist` binary and we can execute the binary via `./mnist`
 
 
 4. If you encounter any issues, please make sure to check out the [roadmap and known issues first](https://docs.modular.com/max/roadmap)
