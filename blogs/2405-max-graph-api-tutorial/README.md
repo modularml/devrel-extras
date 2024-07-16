@@ -2,11 +2,11 @@
 
 Published blog post: [MAX Graph API Tutorials](https://www.modular.com/blog/max-graph-api-tutorial)
 
-Versions used in this blog
+For the time being, the versions used in this blog is [MAX nightly](https://docs.modular.com/max/install#install-max)
 
 ```txt
-max 24.3.0 (9882e19d)
-Modular version 24.3.0-9882e19d-release
+max 2024.7.1505 (ba28802f)
+Modular version 2024.7.1505-ba28802f-release
 ```
 
 ## Installations
