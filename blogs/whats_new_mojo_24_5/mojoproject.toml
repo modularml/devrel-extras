@@ -6,6 +6,9 @@ name = "whats_new_mojo_24_5"
 platforms = ["osx-arm64", "linux-64", "linux-aarch64"]
 version = "0"
 
+[tasks]
+test = "mojo test test_*.mojo"
+
 [dependencies]
 max = "==24.5"
 python = "==3.12" # test 3.12 interop
