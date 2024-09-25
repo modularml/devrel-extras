@@ -1,0 +1,11 @@
+[project]
+authors = ["Modular <hello@modular.com>"]
+channels = ["conda-forge", "https://conda.modular.com/max"]
+description = "What's new in Mojo 24.5"
+name = "whats_new_mojo_24_5"
+platforms = ["osx-arm64", "linux-64", "linux-aarch64"]
+version = "0"
+
+[dependencies]
+max = "==24.5"
+python = "==3.12" # test 3.12 interop
