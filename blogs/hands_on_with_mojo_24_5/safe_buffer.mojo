@@ -50,7 +50,7 @@ fn process_buffers(buffer1: SafeBuffer, inout buffer2: SafeBuffer):
         buffer2.write(i, buffer1.read(i))
 
 
-fn main():
+def main():
     sb = SafeBuffer(10)
     sb.write(0, 255)
     sb.write(1, 128)

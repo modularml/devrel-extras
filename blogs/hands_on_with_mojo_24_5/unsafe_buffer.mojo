@@ -18,7 +18,7 @@ struct UnsafeBuffer:
         self.data.free()
 
 
-fn main():
+def main():
     ub = UnsafeBuffer(10)
     ub.write(0, 255)
     ub.write(1, 128)

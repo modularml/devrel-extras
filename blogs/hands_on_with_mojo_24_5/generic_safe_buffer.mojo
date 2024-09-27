@@ -87,7 +87,7 @@ struct NotStringableNorFormattable(CollectionElement):
     fn __moveinit__(inout self, owned existing: Self): ...
 
 
-fn main():
+def main():
     buffer1 = SafeBuffer[UInt8].initialize_with_value(size=10, value=UInt8(128))
     buffer2 = SafeBuffer[UInt8](size=10)
     # process_buffers(buffer1, buffer1) # <-- argument exclusivity detects such errors at compile time
@@ -102,18 +102,18 @@ fn main():
     print(sbuffer1.__str__())
 
     ## uncomment to see the compiler error:
-    # buf = SafeBuffer[NotStringableNorFormattable](10)
-    # buf.__str__()
+    buf = SafeBuffer[NotStringableNorFormattable](10)
+    buf.__str__()
 
     """
     Compiler error message:
-    /Users/ehsan/workspace/devrel-extras/blogs/whats_new_mojo_24_5/generic_safe_buffer.mojo:108:16: error: invalid call to '__str__': could not deduce parameter 'U' of callee '__str__'
-    buf.__str__()
-    ~~~~~~~~~~~^~
-    /Users/ehsan/workspace/devrel-extras/blogs/whats_new_mojo_24_5/generic_safe_buffer.mojo:108:5: note: failed to infer parameter 'U', argument type 'NotStringableNorFormattable' does not conform to trait 'StringableFormattableCollectionElement'
+    /Users/ehsan/workspace/devrel-extras/blogs/hands_on_with_mojo_24_5/generic_safe_buffer.mojo:106:16: error: invalid call to '__str__': could not deduce parameter 'U' of callee '__str__'
+        buf.__str__()
+        ~~~~~~~~~~~^~
+    /Users/ehsan/workspace/devrel-extras/blogs/hands_on_with_mojo_24_5/generic_safe_buffer.mojo:106:5: note: failed to infer parameter 'U', argument type 'NotStringableNorFormattable' does not conform to trait 'StringableFormattableCollectionElement'
         buf.__str__()
         ^~~
-    /Users/ehsan/workspace/devrel-extras/blogs/whats_new_mojo_24_5/generic_safe_buffer.mojo:48:8: note: function declared here
+    /Users/ehsan/workspace/devrel-extras/blogs/hands_on_with_mojo_24_5/generic_safe_buffer.mojo:48:8: note: function declared here
         fn __str__[U: StringableFormattableCollectionElement](self: SafeBuffer[U]) -> String:
         ^
     mojo: error: failed to parse the provided Mojo source module
