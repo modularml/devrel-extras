@@ -102,8 +102,8 @@ def main():
     print(sbuffer1.__str__())
 
     ## uncomment to see the compiler error:
-    buf = SafeBuffer[NotStringableNorFormattable](10)
-    buf.__str__()
+    # buf = SafeBuffer[NotStringableNorFormattable](10)
+    # buf.__str__()
 
     """
     Compiler error message:
