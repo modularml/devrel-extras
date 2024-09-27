@@ -22,14 +22,13 @@ struct SafeBuffer(Stringable, Formattable):
     fn __del__(owned self):
         self._data.free()
 
-    fn _get_ref(ref [_]self: Self, index: Int) -> Reference[UInt8, __lifetime_of(self)]:
-        return Reference[UInt8, __lifetime_of(self)](self._data[index])
-
     fn write(inout self, index: Int, value: UInt8):
-        self._get_ref(index)[] = value
+        debug_assert(0 <= index < self.size, "index must be within the buffer")
+        self._data[index] = value
 
     fn read(self, index: Int) -> UInt8:
-        return self._get_ref(index)[]
+        debug_assert(0 <= index < self.size, "index must be within the buffer")
+        return self._data[index]
 
     fn __str__(self) -> String:
         return String.format_sequence(self)
@@ -53,14 +52,11 @@ fn process_buffers(buffer1: SafeBuffer, inout buffer2: SafeBuffer):
 def main():
     sb = SafeBuffer(10)
     sb.write(0, 255)
-    sb.write(1, 128)
-    print("safe buffer outputs:")
+    print("value at index 0 after getting set to 255:")
     print(sb.read(0))
-    print(sb.read(1))
 
     buffer1 = SafeBuffer.initialize_with_value(size=10, value=128)
     buffer2 = SafeBuffer(10)
     # process_buffers(buffer1, buffer1) # <-- argument exclusivity detects such errors at compile time
     process_buffers(buffer1, buffer2)
-    print("buffer2:")
-    print(buffer2)
+    print("buffer2:", buffer2)

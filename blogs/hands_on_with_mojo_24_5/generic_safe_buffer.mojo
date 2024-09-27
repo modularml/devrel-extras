@@ -36,14 +36,13 @@ struct SafeBuffer[T: CollectionElement]:
     fn __del__(owned self):
         self._data.free()
 
-    fn _get_ref(ref [_]self: Self, index: Int) -> Reference[Optional[T], __lifetime_of(self)]:
-        return Reference[Optional[T], __lifetime_of(self)](self._data[index])
-
     fn write(inout self, index: Int, value: Optional[T]):
-        self._get_ref(index)[] = value
+        debug_assert(0 <= index < self.size, "index must be within the buffer")
+        self._data[index] = value
 
     fn read(self, index: Int) -> Optional[T]:
-        return self._get_ref(index)[]
+        debug_assert(0 <= index < self.size, "index must be within the buffer")
+        return self._data[index]
 
     fn __str__[U: StringableFormattableCollectionElement](self: SafeBuffer[U]) -> String:
         ret = String()
@@ -73,6 +72,7 @@ struct SafeBuffer[T: CollectionElement]:
     fn take(inout self, index: Int) -> Optional[T] as output:
         output = self.read(index)
         self.write(index, Optional[T](None))
+        return
 
 
 fn process_buffers[T: CollectionElement](buffer1: SafeBuffer[T], inout buffer2: SafeBuffer[T]):
@@ -82,9 +82,14 @@ fn process_buffers[T: CollectionElement](buffer1: SafeBuffer[T], inout buffer2: 
 
 
 struct NotStringableNorFormattable(CollectionElement):
-    fn __init__(inout self): ...
-    fn __copyinit__(inout self, existing: Self): ...
-    fn __moveinit__(inout self, owned existing: Self): ...
+    fn __init__(inout self):
+        ...
+
+    fn __copyinit__(inout self, existing: Self):
+        ...
+
+    fn __moveinit__(inout self, owned existing: Self):
+        ...
 
 
 def main():
