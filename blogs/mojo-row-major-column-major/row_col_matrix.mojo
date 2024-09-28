@@ -1,4 +1,4 @@
-from math import mod, trunc, align_down, align_down_residual
+from math import trunc, align_down, align_down_residual
 from memory import memset_zero, memcpy
 from sys.info import simdwidthof
 from algorithm import vectorize
@@ -124,12 +124,8 @@ struct MojoMatrix[dtype: DType = DType.float64, is_row_major: Bool=True]():
     @staticmethod
     fn from_numpy(np_array: PythonObject) raises -> Self:
         var npArrayPtr = DTypePointer[dtype](
-        __mlir_op.`pop.index_to_pointer`[
-            _type = __mlir_type[`!kgen.pointer<scalar<`, dtype.value, `>>`]
-        ](
-            SIMD[DType.index,1](np_array.__array_interface__['data'][0].__index__()).value
+            address = int(np_array.__array_interface__['data'][0].__index__())
         )
-    )
         var rows = int(np_array.shape[0])
         var cols = int(np_array.shape[1])
         var _matPtr = DTypePointer[dtype].alloc(rows*cols)
@@ -140,12 +136,8 @@ struct MojoMatrix[dtype: DType = DType.float64, is_row_major: Bool=True]():
         var np = Python.import_module("numpy")
         var np_arr = np.zeros((self.rows,self.cols))
         var npArrayPtr = DTypePointer[dtype](
-        __mlir_op.`pop.index_to_pointer`[
-            _type = __mlir_type[`!kgen.pointer<scalar<`, dtype.value, `>>`]
-        ](
-            SIMD[DType.index,1](np_arr.__array_interface__['data'][0].__index__()).value
+            address = int(np_arr.__array_interface__['data'][0].__index__())
         )
-    )
         memcpy(npArrayPtr, self._matPtr, len(self))
         return np_arr
 
@@ -165,8 +157,8 @@ struct MojoMatrix[dtype: DType = DType.float64, is_row_major: Bool=True]():
             rank = 1
         var rows:Int=0
         var cols:Int=0
-        if rank==0 or rank>3:
-            print("Error: Tensor rank should be: 1,2, or 3. Tensor rank is ", rank)
+        if rank==0 or rank>2:
+            print("Error: Matrix rank should be: 1 or 2. Matrix rank is ", rank)
             return ""
         if rank==1:
             rows = 1
@@ -192,21 +184,7 @@ struct MojoMatrix[dtype: DType = DType.float64, is_row_major: Bool=True]():
                         val = self[i,j]
                     else:
                         val = self._matPtr[i+j*rows]
-                var int_str: String
-                if val >= 0.0:
-                    int_str = str(trunc(val).cast[DType.index]())
-                else:
-                    int_str = "-"+str(trunc(val).cast[DType.index]())
-                    val = -val
-                var float_str: String = ""
-                if mod(val,1)==0:
-                    float_str = "0"
-                else:
-                    try:
-                        float_str = str(mod(val,1)).split('.')[-1]
-                    except:
-                        return ""
-                var s: String = int_str+"."+float_str
+                var s = str(val)
                 if j==0:
                     printStr+=s
                 else:
@@ -215,8 +193,6 @@ struct MojoMatrix[dtype: DType = DType.float64, is_row_major: Bool=True]():
         if rank>1:
             printStr+="]"
         printStr+="\n"
-        if rank>2:
-            printStr+="]"
         var row_col_str: String
         if is_row_major:
             row_col_str = "Row Major"
