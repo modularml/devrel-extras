@@ -6,6 +6,6 @@ scikit-learn==1.5.0
 torch==2.2.1
 transformers==4.38.2
 chromadb==0.4.24
-onnx==1.15.0
+onnx==1.17.0
 onnxruntime==1.17.1
 optimum==1.17.1
