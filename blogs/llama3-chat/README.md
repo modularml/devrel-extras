@@ -1,7 +1,7 @@
 # Llama 3 Continuous Chat Interface
 
 A Gradio-based continuous chat interface for interacting with Llama 3 models using MAX Serve on GPU.
-See the [blog](www.modular.com/blog/build-a-continuous-chat-interface-with-llama-3-and-max-serve) for more details.
+See the [blog](https://www.modular.com/blog/build-a-continuous-chat-interface-with-llama-3-and-max-serve) for more details.
 
 ## Requirements
 
