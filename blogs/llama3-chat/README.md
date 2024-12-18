@@ -45,9 +45,12 @@ export SYSTEM_PROMPT="You are a helpful AI assistant."
     # OR for ARM such as Apple M-series
     docker buildx bake --load --set "ui.platform=linux/arm64"
     ```
+
     Note: For 24.6, the server runs on NVIDIA CUDA image
 
-3. If you don't have access to the supported GPU type locally, you can instead follow our tutorials on deploying Llama 3 on GPU with MAX Serve to AWS, GCP or Azure or on Kubernetes to get a public endpoint and then run the UI component separately as follows:
+3.
+
+- If you don't have access to the supported GPU type locally, you can instead follow our tutorials on deploying Llama 3 on GPU with MAX Serve to AWS, GCP or Azure or on Kubernetes to get a public endpoint and then run the UI component separately as follows:
 
     ```bash
     docker run -p 7860:7860 \
@@ -56,7 +59,7 @@ export SYSTEM_PROMPT="You are a helpful AI assistant."
     llama3-chat-ui
     ```
 
-and if you do have access to GPU locally simply run the services via docker-compose and wait for the UI to be available [http://localhost:7860](http://localhost:7860):
+- Or if you do have access to GPU locally simply run the services via docker-compose and wait for the UI to be available [http://localhost:7860](http://localhost:7860):
 
     ```bash
     docker compose up
