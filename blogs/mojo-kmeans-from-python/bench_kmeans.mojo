@@ -1,25 +1,36 @@
 from mojo_kmeans import Matrix, Kmeans
-from mojo_kmeans.utils import list_to_matrix
+from mojo_kmeans.utils import list_to_matrix, kmeans_plus_plus
 from time import now
 from python import Python
 from benchmark import Unit, keep
 import benchmark
 
-def bench_mojo_kmeans(n_clusters: Int, borrowed data: Matrix[DType.float64]) -> Float64:
-    mojo_model = Kmeans(k=n_clusters, max_iterations=10, verbose=False, run_till_max_iter=True)
+def bench_mojo_kmeans(centroids: List[Matrix[DType.float64]], borrowed data: Matrix[DType.float64]) -> Float64:
+    mojo_model = Kmeans(centroids, max_iterations=10, verbose=False, run_till_max_iter=True)
     t = now()
     _ = mojo_model.fit(data)
     t_mojo = Float64(now()-t)/1_000_000
     return t_mojo
 
-def bench_python_kmeans(n_clusters: Int, borrowed data: PythonObject) -> Float64:
+def bench_python_kmeans(centroids: PythonObject, borrowed data: PythonObject) -> Float64:
     Python.add_to_path(".")
     py_kmeans = Python.import_module("python_kmeans")
-    py_model = py_kmeans.Kmeans(k=n_clusters, max_iterations=10, verbose=False, run_till_max_iter=True)
+    py_model = py_kmeans.Kmeans(centroids, max_iterations=10, verbose=False, run_till_max_iter=True)
     t = now()
     _ = py_model.fit(data)
     t_py = Float64(now()-t)/1_000_000
     return t_py
+
+def bench_sklearn_kmeans(centroids: PythonObject, borrowed data: PythonObject) -> Float64:
+    sklearn_cluster = Python.import_module("sklearn.cluster")
+    sklearn_model = sklearn_cluster.KMeans(n_clusters=centroids.shape[0], 
+                                            max_iter=10,
+                                            verbose=False,
+                                            tol=0,
+                                            init=centroids)
+    t = now()
+    _ = sklearn_model.fit(data)
+    return Float64(now()-t)/1_000_000
 
 def get_dataset(n_clusters: PythonObject, n_samples: PythonObject, n_features: PythonObject) -> PythonObject:
     sklearn_datasets = Python.import_module("sklearn.datasets")
@@ -47,8 +58,11 @@ def main():
     for idx in range(int(len(clusters_range))):
         data = get_dataset(clusters_range[idx],samples_range[0],features_range[0])[0]
         mojo_data = Matrix.from_numpy(data)
-        res1[idx,0] = bench_mojo_kmeans(int(clusters_range[idx]),mojo_data)
-        res1[idx,1] = bench_python_kmeans(int(clusters_range[idx]),data)
+        centroids = kmeans_plus_plus[DType.float64, 4*simdwidthof[DType.float64]()](mojo_data, int(clusters_range[idx]))
+        py_centroids = list_to_matrix(centroids).to_numpy()
+
+        res1[idx,0] = bench_mojo_kmeans(centroids,mojo_data)
+        res1[idx,1] = bench_sklearn_kmeans(py_centroids, data)
     x_label = "Numbers of Clusters"
     fig_label = "Samples: "+str(samples_range[0])+" Features: "+str(features_range[0])
     py_utils.plot_bench(res1.to_numpy(), 
@@ -68,8 +82,11 @@ def main():
     for idx in range(int(len(samples_range))):
         data = get_dataset(clusters_range[5],samples_range[idx],features_range[0])[0]
         mojo_data = Matrix.from_numpy(data)
-        res2[idx,0] = bench_mojo_kmeans(int(clusters_range[5]),mojo_data)
-        res2[idx,1] = bench_python_kmeans(int(clusters_range[5]),data)
+        centroids = kmeans_plus_plus[DType.float64, 4*simdwidthof[DType.float64]()](mojo_data, int(clusters_range[5]))
+        py_centroids = list_to_matrix(centroids).to_numpy()
+
+        res2[idx,0] = bench_mojo_kmeans(centroids,mojo_data)
+        res2[idx,1] = bench_sklearn_kmeans(py_centroids, data)
     x_label = "Number of Samples"
     fig_label = "Clusters: "+str(clusters_range[5])+" Features: "+str(features_range[0])
     py_utils.plot_bench(res2.to_numpy(), 
@@ -89,8 +106,11 @@ def main():
     for idx in range(int(len(features_range))):
         data = get_dataset(clusters_range[0],samples_range[1],features_range[idx])[0]
         mojo_data = Matrix.from_numpy(data)
-        res3[idx,0] = bench_mojo_kmeans(int(clusters_range[0]),mojo_data)
-        res3[idx,1] = bench_python_kmeans(int(clusters_range[0]),data)
+        centroids = kmeans_plus_plus[DType.float64, 4*simdwidthof[DType.float64]()](mojo_data, int(clusters_range[0]))
+        py_centroids = list_to_matrix(centroids).to_numpy()
+
+        res3[idx,0] = bench_mojo_kmeans(centroids, mojo_data)
+        res3[idx,1] = bench_sklearn_kmeans(py_centroids, data)
     x_label = "Number of Features"
     fig_label = "Samples: "+str(samples_range[1])+" Clusters: "+str(clusters_range[0])
     py_utils.plot_bench(res3.to_numpy(), 
