@@ -1,0 +1,23 @@
+[project]
+authors = ["Modular <hello@modular.com>"]
+channels = [
+    "conda-forge",
+    "https://conda.modular.com/max",
+    "https://repo.prefix.dev/modular-community",
+]
+description = "Add a short description here"
+name = "hands-on-with-mojo-24-6"
+platforms = ["osx-arm64", "linux-64"]
+version = "0.0.0"
+
+[dependencies]
+max = "==24.6.0"
+
+[tasks]
+example1 = "mojo example1.mojo"
+example2 = "mojo example2.mojo"
+example3 = "mojo example3.mojo"
+example4 = "mojo example4.mojo"
+example5 = "mojo example5.mojo"
+example6 = "mojo example6.mojo"
+example7 = "mojo example7.mojo"
