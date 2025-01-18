@@ -30,7 +30,7 @@ struct TaskManager:
         # Return a reference to the specific Task origin
         return self.tasks[index]
 
-    fn show_tasks(read self):
+    fn show_tasks(self):
         for t in self.tasks:
             print("- ", t[].description)
 
@@ -39,15 +39,19 @@ def main():
 
     manager.add_task("Walk the dog")
     manager.add_task("Write Mojo 24.6 blog post")
+    # pick_longer(manager.get_task(0), manager.get_task(1))
+    first_task = manager.get_task(0)
+    second_task = manager.get_task(1)
+    _ = pick_longer(first_task, second_task)
 
     # We can fetch a ref to a Task and mutate it in place if needed
-    first_task = manager.get_task(0)
-    first_task.description = "Walk the dog ASAP and then write the blog post!"
+    #first_task = manager.get_task(0)
+    manager.get_task(0).description = "Walk the dog ASAP and then write the blog post!"
 
     manager.show_tasks()
 
-    longer = pick_longer(first_task, manager.get_task(1))
-    print("Longer task: ", longer.description)
+    # longer = pick_longer(first_task, manager.get_task(1))
+    # print("Longer task: ", longer.description)
 
     # Output:
     # Longer task: Walk the dog ASAP and then write the blog post!

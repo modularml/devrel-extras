@@ -2,6 +2,7 @@ from collections import Deque
 from memory import OwnedPointer
 from os import abort
 
+
 @value
 struct HeavyResource:
     var data: String
@@ -9,31 +10,31 @@ struct HeavyResource:
     fn __init__(out self, data: String):
         self.data = data
 
-    fn do_work(read self):
+    fn do_work(self):
         print("Heavy work:", self.data)
 
 struct Task:
     var description: String
-    var heavy_resource: HeavyResource
+    var heavy_resource: OwnedPointer[HeavyResource]
 
     # We keep the @implicit for description
     @implicit
     fn __init__(out self, desc: StringLiteral):
         self.description = desc
-        self.heavy_resource = HeavyResource("Heavy resource with description: " + desc)
+        self.heavy_resource = OwnedPointer[HeavyResource](HeavyResource("Heavy resource with description: " + desc))
 
     fn __moveinit__(out self, owned other: Task):
         self.description = other.description^
         self.heavy_resource = other.heavy_resource^
 
     # Workaround `CollectionElement` requirement for `Deque`
-    fn __copyinit__(out self, read other: Task):
+    fn __copyinit__(out self, other: Task):
         abort("__copyinit__ should never be called")
         while True:
             pass
 
-    fn do_work(read self):
-        self.heavy_resource.do_work()
+    fn do_work(self):
+        self.heavy_resource[].do_work()
 
 
 struct TaskManager:
@@ -42,11 +43,11 @@ struct TaskManager:
     fn __init__(out self):
         self.tasks = Deque[Task]()
 
-    # changing `read` to `owned` to avoid Copy
+    # Need to use `owned` to avoid Copy
     fn add_task(mut self, owned task: Task):
         self.tasks.append(task^)
 
-    fn show_tasks(read self):
+    fn show_tasks(self):
         for t in self.tasks:
             print("- ", t[].description)
 

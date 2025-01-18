@@ -26,7 +26,7 @@ struct TaskManager:
         # or to the front
         self.tasks.appendleft(task)
 
-    fn show_tasks(read self):
+    fn show_tasks(self):
         for t in self.tasks:
             print("- ", t[].description)
 

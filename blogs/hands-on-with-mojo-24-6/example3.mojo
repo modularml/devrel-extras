@@ -26,7 +26,7 @@ struct TaskManager:
         # Return a reference to the specific Task origin
         return self.tasks[index]
 
-    fn show_tasks(read self):
+    fn show_tasks(self):
         for t in self.tasks:
             print("- ", t[].description)
 

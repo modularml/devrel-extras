@@ -19,7 +19,7 @@ struct TaskManager:
     fn add_task(mut self, task: Task):
         self.tasks.append(task)
 
-    fn show_tasks(read self):
+    fn show_tasks(self):
         for t in self.tasks:
             print("- ", t[].description)
 
