@@ -47,6 +47,10 @@ struct TaskManager:
     fn add_task(mut self, owned task: Task):
         self.tasks.append(task^)
 
+    fn add_urgent_task(mut self, owned task: Task):
+        # or to the front
+        self.tasks.appendleft(task)
+
     fn show_tasks(self):
         for t in self.tasks:
             print("- ", t[].description)
@@ -54,8 +58,8 @@ struct TaskManager:
     @staticmethod
     fn bootstrap_example(out manager: TaskManager):
         manager = TaskManager()
-        manager.add_task("Resourceful Task A")
-        manager.add_task("Resourceful Task B")
+        manager.add_task("Deque-based Task #1")
+        manager.add_urgent_task("Deque-based Task #0")
         return
 
     fn do_work(owned self):

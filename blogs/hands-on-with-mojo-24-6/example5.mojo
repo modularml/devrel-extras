@@ -27,8 +27,8 @@ struct TaskManager:
     @staticmethod
     fn bootstrap_example(out manager: TaskManager):
         manager = TaskManager()
+        manager.add_task("Default Task #0")
         manager.add_task("Default Task #1")
-        manager.add_task("Default Task #2")
         return  # 'manager' is implied
 
 def main():
@@ -36,5 +36,5 @@ def main():
     mgr = TaskManager.bootstrap_example()
     mgr.show_tasks()
     # Output:
+    # Default Task #0
     # Default Task #1
-    # Default Task #2

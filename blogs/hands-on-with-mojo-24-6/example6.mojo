@@ -22,7 +22,7 @@ struct TaskManager:
         # We can append to the back
         self.tasks.append(task)
 
-    fn add_task_front(mut self, task: Task):
+    fn add_urgent_task(mut self, task: Task):
         # or to the front
         self.tasks.appendleft(task)
 
@@ -34,7 +34,7 @@ struct TaskManager:
     fn bootstrap_example(out manager: TaskManager):
         manager = TaskManager()
         manager.add_task("Deque-based Task #1")
-        manager.add_task_front("Deque-based Task #0")
+        manager.add_urgent_task("Deque-based Task #0")
         return
 
 def main():
