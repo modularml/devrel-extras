@@ -32,14 +32,13 @@ TOOLS = [
 
 def main():
     user_message = "What's the weather like in San Francisco?"
-
+    print(f"user_message: {user_message}")
     response = client.chat.completions.create(
         model="modularai/llama-3.1",
         messages=[{"role": "user", "content": user_message}],
         tools=TOOLS,
         tool_choice="auto",
     )
-
     output = response.choices[0].message
     print("Output:", output)
     print("Tool calls:", output.tool_calls)

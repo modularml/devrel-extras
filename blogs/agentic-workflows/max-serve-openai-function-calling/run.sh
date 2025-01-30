@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PROGRAM=$1
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 declare -a SERVICE_PIDS
 CLEANUP_DONE=0
 
@@ -30,32 +31,25 @@ cleanup() {
     fi
 }
 
-setup_max() {
-    if [ -d "max" ]; then
-        cd max || exit 1
-        git fetch
-        git checkout 5d7caad6d463d29ef911df7a48b22d4cf615d284
-        cd .. || exit 1
-    else
-        git clone https://github.com/modular/max || exit 1
-        cd max || exit 1
-        git checkout 5d7caad6d463d29ef911df7a48b22d4cf615d284 || exit 1
-        cd .. || exit 1
-    fi
+setup_max_serve() {
+    magic global install max-pipelines
 }
 
 trap cleanup SIGINT SIGTERM
 
-setup_max
-cd max/pipelines/python || exit 1
+setup_max_serve
+
+# Change to the script's directory before running the program
+cd "$SCRIPT_DIR" || exit 1
 
 # Check for GPU and set command accordingly
 if command -v nvidia-smi &>/dev/null && nvidia-smi &>/dev/null; then
     echo "GPU detected, using GPU mode..."
-    magic run serve --huggingface-repo-id=modularai/llama-3.1 --use-gpu --max-length=2048 &
+    max-serve serve --use-gpu --huggingface-repo-id=modularai/llama-3.1 --use-gpu --max-length=2048 &
+
 else
     echo "No GPU detected, using CPU mode..."
-    magic run serve --huggingface-repo-id=modularai/llama-3.1 --max-length=2048 &
+    max-serve serve --huggingface-repo-id=modularai/llama-3.1 --max-length=2048 &
 fi
 
 SERVICE_PIDS+=($!)
@@ -66,11 +60,11 @@ while ! curl -s "http://0.0.0.0:8000/v1/health" >/dev/null; do sleep 2; done
 
 echo "MAX server is ready!"
 
-# Run the program based on type
+# Run the program based on type with correct path
 if [ "$PROGRAM" = "app.py" ]; then
     uvicorn app:app --port 8001 --host 0.0.0.0 --reload
 else
-    python "$PROGRAM"
+    python "$SCRIPT_DIR/$PROGRAM"
 fi
 
 cleanup
