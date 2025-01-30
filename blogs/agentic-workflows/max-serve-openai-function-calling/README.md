@@ -10,7 +10,7 @@ In this blog, we will:
 - Showcase how MAX Serve can facilitate local and cloud deployment of LLM-based applications.
 - Walk through a working example that you can clone and run locally.
 
-Note that this feature is available in [MAX nightly 25.1.0.dev2025012905](https://github.com/modular/max/commit/2f83e343a4d28a341570b2aab7131ff2da3e19d5) and the code is available in our [GitHub repository](https://github.com/modular/devrel-extras/agentic-workflows/max-server-openai-function-calling).
+Note that this feature is available in [MAX nightly 25.1.0.dev2025012905](https://github.com/modular/max/commit/2f83e343a4d28a341570b2aab7131ff2da3e19d5) and the code is available in our [GitHub repository](https://github.com/modular/devrel-extras/tree/main/blogs/agentic-workflows/max-serve-openai-function-calling).
 
 To proceed, please make sure to install magic` CLI
 
