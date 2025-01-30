@@ -10,7 +10,10 @@ In this blog, we will:
 - Showcase how MAX Serve can facilitate local and cloud deployment of LLM-based applications.
 - Walk through a working example that you can clone and run locally.
 
-Note that this feature is available in [MAX nightly 25.1.0.dev2025012905](https://github.com/modular/max/commit/2f83e343a4d28a341570b2aab7131ff2da3e19d5) and the code is available in our [GitHub repository](https://github.com/modular/devrel-extras/tree/main/blogs/agentic-workflows/max-serve-openai-function-calling).
+Note that this feature is available in [MAX nightly 25.1.0.dev2025012905](https://github.com/modular/max/commit/2f83e343a4d28a341570b2aab7131ff2da3e19d5) which corresponds to this nightly MAX Serve docker image
+[docker.modular.com/modular/max-openai-api:25.1.0.dev2025012905](https://hub.docker.com/layers/modular/max-openai-api/25.1.0.dev2025012905/images/sha256-332299d35cda7c7072df9c61b08d736781948f8f104504797200a9c7b7f599d5)
+
+The code is available in our [GitHub repository](https://github.com/modular/devrel-extras/tree/main/blogs/agentic-workflows/max-serve-openai-function-calling).
 
 To proceed, please make sure to install magic` CLI
 
@@ -43,7 +46,14 @@ Function calling allows LLMs to enhance their responses by:
 
 ## Implementing function calling with OpenAI
 
-To illustrate function calling, let's start with a simple example where an AI retrieves the weather using a mock function.
+First things first, you can run the MAX Serve easily on both CPU and GPU as follows:
+
+```bash
+magic global install max-pipelines
+max-serve serve --huggingface-repo-id=modularai/llama-3.1
+```
+
+Then to illustrate function calling, let's start with a simple example where an AI retrieves the weather using a mock function.
 
 ### `single_function_call.py`
 
@@ -104,7 +114,14 @@ Run the example via:
 magic run single_function_call
 ```
 
-Note that the very first compilation of the model can take a few minutes. The next invocations will be much faster.
+which outputs:
+
+```txt
+User message: What's the weather like in San Francisco?
+Weather response: The weather in San Francisco is sunny with a temperature of 72°F
+```
+
+**Note** that the very first compilation of the model can take a few minutes. The next invocations will be much faster.
 
 ### Understanding the function calling format
 
@@ -219,7 +236,17 @@ The LLM can now determine when to call `get_weather` or `get_air_quality` based 
 Run the example via:
 
 ```bash
-magic run muli_function_calls
+magic run multi_function_calls
+```
+
+which outputs:
+
+```txt
+User message: What's the weather like in San Francisco?
+Weather response: The weather in San Francisco is sunny with a temperature of 72°F
+
+User message: What's the air quality like in San Francisco?
+Air quality response: The air quality in San Francisco is good with a PM2.5 of 10µg/m³
 ```
 
 ## Deploying with MAX Serve
@@ -437,5 +464,6 @@ OpenAI's function calling and MAX Serve together provide an efficient way to bui
 Now that you've implemented function calling with MAX Serve, you can explore more advanced features and join our developer community. Here are some resources to help you continue your journey:
 
 - [Get started with MAX](https://docs.modular.com/max/get-started)
-- Explore [MAX Serve](https://docs.modular.com/max/serve) and [Magic tutorial](https://docs.modular.com/max/tutorials/magic).
+- Explore [MAX Serve](https://docs.modular.com/max/serve) and [MAX Container](https://docs.modular.com/max/container/)
+- Learn more about `magic` CLI in this [Magic tutorial](https://docs.modular.com/max/tutorials/magic)
 - Join our [Discord](https://discord.gg/modular) and our [Modular forum](https://forum.modular.com/)
